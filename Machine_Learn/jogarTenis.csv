@@ -1,0 +1,16 @@
+Dia,Aparencia,Temperatura,Umidade,Vento,Joga
+D1,sol,quente,alta,fraco,nao
+D2,sol,quente,alta,forte,nao
+D3,nublado,quente,alta,fraco,sim
+D4,chuvoso,ameno,alta,fraco,sim
+D5,chuvoso,fria,normal,fraco,sim
+D6,chuvoso,fria,normal,forte,nao
+D7,nublado,fria,normal,forte,sim
+D8,sol,ameno,alta,fraco,nao
+D9,sol,fria,normal,fraco,sim
+D10,chuvoso,ameno,normal,fraco,sim
+D11,sol,ameno,normal,forte,sim
+D12,nublado,ameno,alta,forte,sim
+D13,nublado,quente,normal,fraco,sim
+D14,chuvoso,ameno,alta,forte,nao
+
