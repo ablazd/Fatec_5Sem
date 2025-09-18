@@ -1,141 +1,278 @@
-/* Estilos personalizados */
-.section {
-
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Segoe UI', Arial, sans-serif;
-        background: #fafbfc;
-        color: #222;
-    }
-
-    header {
-        background: #fff;
-        border-bottom: 1px solid #e5e5e5;
-        min-height: 56px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #222;
-        font-size: 22px;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-    }
-
-    main {
-        padding: 32px 16px;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    button {
-        background: #ededed;
-        color: #222;
-        border: 1px solid #d1d1d1;
-        padding: 10px 20px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 15px;
-        transition: background 0.2s, border 0.2s;
-    }
-
-    button:hover {
-        background: #e0e0e0;
-        border-color: #bdbdbd;
-    }
-
-    input, textarea, select {
-        background: #fff;
-        color: #222;
-        border: 1px solid #d1d1d1;
-        border-radius: 4px;
-        padding: 8px 10px;
-        font-size: 15px;
-        margin-bottom: 12px;
-        outline: none;
-        transition: border 0.2s;
-    }
-
-    input:focus, textarea:focus, select:focus {
-        border-color: #bdbdbd;
-    }
-
-    .card {
-        background: #fff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-    }
-
-    a {
-        color: #444;
-        text-decoration: none;
-        border-bottom: 1px dotted #bbb;
-        transition: border 0.2s;
-    }
-
-    a:hover {
-        border-bottom: 1px solid #888;
-    }
+/* Estilos personalizados - Design Minimalista Vermelho/Vinho */
+:root {
+    --primary-red: #dc2626;
+    --primary-wine: #7c2d12;
+    --secondary-red: #ef4444;
+    --light-red: #fef2f2;
+    --dark-red: #991b1b;
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+    --border-light: #f3f4f6;
+    --white: #ffffff;
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.curso-badge {
-    display: inline-block;
-    margin: 0.25rem;
-    padding: 0.375rem 0.75rem;
-    background-color: #e9ecef;
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--light-red);
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-size: 14px;
 }
 
-.curso-badge .btn-close {
-    margin-left: 0.5rem;
-    font-size: 0.75em;
+/* Navbar minimalista */
+.navbar {
+    background: var(--white) !important;
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: var(--shadow);
+    padding: 1rem 0;
 }
 
-.spinner-border {
-    width: 3rem;
-    height: 3rem;
+.navbar-brand {
+    color: var(--primary-wine) !important;
+    font-weight: 600;
+    font-size: 1.25rem;
+    text-decoration: none;
 }
 
-.alert {
-    border-radius: 0.5rem;
+.navbar-brand:hover {
+    color: var(--primary-red) !important;
+}
+
+/* Botões minimalistas */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 10px 20px;
+    border: none;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary-red);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: var(--dark-red);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-success {
+    background: var(--primary-wine);
+    color: var(--white);
+}
+
+.btn-success:hover {
+    background: #5c1d0a;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-outline-primary {
+    background: transparent;
+    color: var(--primary-red);
+    border: 1px solid var(--primary-red);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-red);
+    color: var(--white);
+}
+
+.btn-outline-secondary {
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--border-light);
+}
+
+.btn-outline-secondary:hover {
+    background: var(--border-light);
+    color: var(--text-dark);
+}
+
+.btn-secondary {
+    background: var(--text-light);
+    color: var(--white);
+}
+
+.btn-secondary:hover {
+    background: var(--text-dark);
+}
+
+.btn-danger {
+    background: var(--secondary-red);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background: var(--dark-red);
+}
+
+/* Cards minimalistas */
+.card {
+    background: var(--white);
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.card-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border-light);
+    padding: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Formulários minimalistas */
+.form-control {
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    background: var(--white);
+    color: var(--text-dark);
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    outline: none;
 }
 
 .form-label {
     font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    font-size: 14px;
 }
 
-.input-group .btn {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+/* Tabelas minimalistas */
+.table {
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .btn-group {
-        flex-direction: column;
-    }
-    
-    .btn-group .btn {
-        margin-right: 0;
-        margin-bottom: 0.5rem;
-    }
-    
-    .btn-group .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .table-responsive {
-        font-size: 0.875rem;
-    }
+.table thead th {
+    background: var(--light-red);
+    color: var(--primary-wine);
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+    font-size: 14px;
 }
 
-/* Animações */
-.fade-in {
+.table tbody td {
+    padding: 1rem;
+    border-top: 1px solid var(--border-light);
+    vertical-align: middle;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background: rgba(254, 242, 242, 0.3);
+}
+
+.table-hover tbody tr:hover {
+    background: var(--light-red);
+}
+
+/* Badges de cursos minimalistas */
+.curso-item {
+    display: inline-flex;
+    align-items: center;
+    background: var(--light-red);
+    color: var(--primary-wine);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: 20px;
+    padding: 6px 12px;
+    margin: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.curso-item .btn-close {
+    margin-left: 8px;
+    padding: 0;
+    background: none;
+    border: none;
+    font-size: 10px;
+    opacity: 0.6;
+    color: var(--primary-wine);
+}
+
+.curso-item .btn-close:hover {
+    opacity: 1;
+}
+
+/* Modais minimalistas */
+.modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border-light);
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-footer {
+    background: var(--light-red);
+    border-top: 1px solid var(--border-light);
+    padding: 1rem 2rem;
+}
+
+/* Alertas minimalistas */
+.alert {
+    border: none;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    font-size: 14px;
+}
+
+.alert-info {
+    background: var(--light-red);
+    color: var(--primary-wine);
+}
+
+.alert-danger {
+    background: #fef2f2;
+    color: var(--dark-red);
+    border-left: 4px solid var(--secondary-red);
+}
+
+/* Spinner minimalista */
+.spinner-border {
+    color: var(--primary-red);
+    width: 2rem;
+    height: 2rem;
+}
+
+/* Seções */
+.section {
     animation: fadeIn 0.3s ease-in;
 }
 
@@ -150,46 +287,159 @@
     }
 }
 
+/* Responsividade minimalista */
+@media (max-width: 768px) {
+    body {
+        font-size: 13px;
+    }
+    
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-group .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .table-responsive {
+        font-size: 13px;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .form-control {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
 /* Estados de loading */
 .loading {
     opacity: 0.6;
     pointer-events: none;
 }
 
-/* Estilos para modais */
-.modal-content {
-    border-radius: 0.5rem;
+/* Input groups */
+.input-group .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
 }
 
-.modal-header {
-    border-bottom: 1px solid #dee2e6;
+.input-group .form-control:focus {
+    z-index: 3;
 }
 
-.modal-footer {
-    border-top: 1px solid #dee2e6;
+/* Utilitários */
+.text-center {
+    text-align: center;
 }
 
-/* Estilos para badges de cursos */
-.curso-item {
-    display: inline-flex;
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.align-items-center {
     align-items: center;
-    background-color: #e9ecef;
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
-    padding: 0.25rem 0.5rem;
-    margin: 0.125rem;
-    font-size: 0.875rem;
 }
 
-.curso-item .btn-close {
-    margin-left: 0.5rem;
-    padding: 0;
-    background: none;
-    border: none;
-    font-size: 0.75em;
-    opacity: 0.5;
+.me-1 {
+    margin-right: 0.25rem;
 }
 
-.curso-item .btn-close:hover {
-    opacity: 1;
+.me-2 {
+    margin-right: 0.5rem;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.text-muted {
+    color: var(--text-light) !important;
+}
+
+/* Botões pequenos na tabela */
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 6px;
+}
+
+.btn-group .btn-sm {
+    border-radius: 0;
+}
+
+.btn-group .btn-sm:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.btn-group .btn-sm:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.btn-group .btn-sm:not(:last-child) {
+    border-right: none;
 }

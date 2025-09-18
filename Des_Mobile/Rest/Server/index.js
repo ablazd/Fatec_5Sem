@@ -81,15 +81,24 @@ const Aluno = mongoose.model('Aluno', alunoSchema);
 app.get('/api/cep/:cep', async (req, res) => {
   try {
     const { cep } = req.params;
+    
+    // Validar formato do CEP
+    if (!/^\d{8}$/.test(cep)) {
+      return res.status(400).json({ error: 'CEP deve conter apenas 8 dígitos' });
+    }
+    
+    console.log(`Buscando CEP: ${cep}`);
     const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
     
     if (response.data.erro) {
       return res.status(404).json({ error: 'CEP não encontrado' });
     }
     
+    console.log(`CEP encontrado: ${JSON.stringify(response.data)}`);
     res.json(response.data);
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao buscar CEP' });
+    console.error('Erro ao buscar CEP:', error.message);
+    res.status(500).json({ error: 'Erro ao buscar CEP: ' + error.message });
   }
 });
 

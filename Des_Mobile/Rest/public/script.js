@@ -56,7 +56,18 @@ async function buscarCEP() {
     }
     
     try {
+        // Mostrar loading
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = 'Buscando...';
+        button.disabled = true;
+        
         const response = await fetch(`/api/cep/${cep}`);
+        
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         if (data.erro) {
@@ -65,13 +76,21 @@ async function buscarCEP() {
         }
         
         // Preencher campos automaticamente
-        document.getElementById('logradouro').value = data.logradouro;
-        document.getElementById('bairro').value = data.bairro;
-        document.getElementById('cidade').value = data.localidade;
-        document.getElementById('estado').value = data.uf;
+        document.getElementById('logradouro').value = data.logradouro || '';
+        document.getElementById('bairro').value = data.bairro || '';
+        document.getElementById('cidade').value = data.localidade || '';
+        document.getElementById('estado').value = data.uf || '';
+        
+        alert('CEP encontrado e preenchido automaticamente!');
         
     } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
         alert('Erro ao buscar CEP: ' + error.message);
+    } finally {
+        // Restaurar botão
+        const button = event.target;
+        button.textContent = 'Buscar';
+        button.disabled = false;
     }
 }
 
@@ -84,7 +103,18 @@ async function buscarCEPModal() {
     }
     
     try {
+        // Mostrar loading
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = 'Buscando...';
+        button.disabled = true;
+        
         const response = await fetch(`/api/cep/${cep}`);
+        
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         if (data.erro) {
@@ -93,13 +123,21 @@ async function buscarCEPModal() {
         }
         
         // Preencher campos automaticamente
-        document.getElementById('editLogradouro').value = data.logradouro;
-        document.getElementById('editBairro').value = data.bairro;
-        document.getElementById('editCidade').value = data.localidade;
-        document.getElementById('editEstado').value = data.uf;
+        document.getElementById('editLogradouro').value = data.logradouro || '';
+        document.getElementById('editBairro').value = data.bairro || '';
+        document.getElementById('editCidade').value = data.localidade || '';
+        document.getElementById('editEstado').value = data.uf || '';
+        
+        alert('CEP encontrado e preenchido automaticamente!');
         
     } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
         alert('Erro ao buscar CEP: ' + error.message);
+    } finally {
+        // Restaurar botão
+        const button = event.target;
+        button.textContent = 'Buscar';
+        button.disabled = false;
     }
 }
 
@@ -253,15 +291,17 @@ async function carregarAlunos() {
                     <td>${endereco}</td>
                     <td><small>${cursosStr}</small></td>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary me-1" onclick="visualizarAluno('${aluno._id}')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning me-1" onclick="editarAluno('${aluno._id}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="confirmarExclusao('${aluno._id}', '${aluno.nome}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-outline-primary" onclick="visualizarAluno('${aluno._id}')" title="Visualizar">
+                                Ver
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="editarAluno('${aluno._id}')" title="Editar">
+                                Editar
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="confirmarExclusao('${aluno._id}', '${aluno.nome}')" title="Excluir">
+                                Excluir
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `;

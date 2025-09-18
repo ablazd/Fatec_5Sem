@@ -47,29 +47,45 @@ export default function App() {
   const buscarCEP = async (cep) => {
     try {
       const cepLimpo = cep.replace(/\D/g, '');
-      if (cepLimpo.length === 8) {
-        const response = await fetch(url + '/api/cep/' + cepLimpo);
-        const data = await response.json();
-        
-        if (data.erro) {
-          Alert.alert('Erro', 'CEP não encontrado');
-          return;
-        }
-        
-        setFormData(prev => ({
-          ...prev,
-          endereco: {
-            ...prev.endereco,
-            cep: cep,
-            logradouro: data.logradouro,
-            bairro: data.bairro,
-            cidade: data.localidade,
-            estado: data.uf
-          }
-        }));
+      
+      if (cepLimpo.length !== 8) {
+        Alert.alert('Erro', 'CEP deve ter 8 dígitos');
+        return;
       }
+
+      setLoading(true);
+      const response = await fetch(url + '/api/cep/' + cepLimpo);
+      
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.erro) {
+        Alert.alert('Erro', 'CEP não encontrado');
+        return;
+      }
+      
+      setFormData(prev => ({
+        ...prev,
+        endereco: {
+          ...prev.endereco,
+          cep: cep,
+          logradouro: data.logradouro || '',
+          bairro: data.bairro || '',
+          cidade: data.localidade || '',
+          estado: data.uf || ''
+        }
+      }));
+      
+      Alert.alert('Sucesso', 'CEP encontrado e preenchido automaticamente!');
+      
     } catch (error) {
+      console.error('Erro ao buscar CEP:', error);
       Alert.alert('Erro', 'Erro ao buscar CEP: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -206,7 +222,7 @@ export default function App() {
   // Renderizar tela do menu
   const renderMenu = () => (
     <View style={styles.container}>
-      <Text style={styles.title}>Sistema de Gestão de Alunos</Text>
+      <Text style={styles.title}>Gestão de Alunos</Text>
       
       <TouchableOpacity 
         style={styles.menuButton}
@@ -215,7 +231,7 @@ export default function App() {
           carregarAlunos();
         }}
       >
-        <Text style={styles.menuButtonText}>📋 Listar Alunos</Text>
+        <Text style={styles.menuButtonText}>Listar Alunos</Text>
       </TouchableOpacity>
 
       <TouchableOpacity 
@@ -225,7 +241,7 @@ export default function App() {
           setTelaAtual('adicionar');
         }}
       >
-        <Text style={styles.menuButtonText}>➕ Adicionar Aluno</Text>
+        <Text style={styles.menuButtonText}>Adicionar Aluno</Text>
       </TouchableOpacity>
 
       <TouchableOpacity 
@@ -239,7 +255,7 @@ export default function App() {
             .catch(error => Alert.alert('Erro', error.message));
         }}
       >
-        <Text style={styles.menuButtonText}>🔍 Testar CEP</Text>
+        <Text style={styles.menuButtonText}>Testar CEP</Text>
       </TouchableOpacity>
     </View>
   );
@@ -252,14 +268,14 @@ export default function App() {
           style={styles.backButton}
           onPress={() => setTelaAtual('menu')}
         >
-          <Text style={styles.backButtonText}>← Voltar</Text>
+          <Text style={styles.backButtonText}>Voltar</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Lista de Alunos</Text>
         <TouchableOpacity 
           style={styles.refreshButton}
           onPress={carregarAlunos}
         >
-          <Text style={styles.refreshButtonText}>🔄</Text>
+          <Text style={styles.refreshButtonText}>↻</Text>
         </TouchableOpacity>
       </View>
 
@@ -285,7 +301,7 @@ export default function App() {
                     setTelaAtual('visualizar');
                   }}
                 >
-                  <Text style={styles.actionButtonText}>👁️ Ver</Text>
+                  <Text style={styles.actionButtonText}>Ver</Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity 
@@ -296,14 +312,14 @@ export default function App() {
                     setTelaAtual('editar');
                   }}
                 >
-                  <Text style={styles.actionButtonText}>✏️ Editar</Text>
+                  <Text style={styles.actionButtonText}>Editar</Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity 
                   style={[styles.actionButton, styles.deleteButton]}
                   onPress={() => deletarAluno(item._id, item.nome)}
                 >
-                  <Text style={styles.actionButtonText}>🗑️ Excluir</Text>
+                  <Text style={styles.actionButtonText}>Excluir</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -321,7 +337,7 @@ export default function App() {
           style={styles.backButton}
           onPress={() => setTelaAtual('listar')}
         >
-          <Text style={styles.backButtonText}>← Voltar</Text>
+          <Text style={styles.backButtonText}>Voltar</Text>
         </TouchableOpacity>
         <Text style={styles.title}>
           {telaAtual === 'editar' ? 'Editar Aluno' : 'Adicionar Aluno'}
@@ -497,7 +513,7 @@ export default function App() {
           style={styles.backButton}
           onPress={() => setTelaAtual('listar')}
         >
-          <Text style={styles.backButtonText}>← Voltar</Text>
+          <Text style={styles.backButtonText}>Voltar</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Detalhes do Aluno</Text>
       </View>
@@ -574,130 +590,145 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fef2f2',
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '600',
     textAlign: 'center',
     marginVertical: 20,
-    color: '#333',
+    color: '#7c2d12',
   },
   menuButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    margin: 10,
-    borderRadius: 10,
+    backgroundColor: '#dc2626',
+    padding: 16,
+    margin: 12,
+    borderRadius: 8,
     alignItems: 'center',
-  },
-  menuButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 15,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  backButton: {
-    padding: 10,
-  },
-  backButtonText: {
-    color: '#007AFF',
-    fontSize: 16,
-  },
-  refreshButton: {
-    padding: 10,
-  },
-  refreshButtonText: {
-    fontSize: 20,
-  },
-  loadingText: {
-    textAlign: 'center',
-    fontSize: 16,
-    marginTop: 50,
-    color: '#666',
-  },
-  alunoCard: {
-    backgroundColor: '#fff',
-    margin: 10,
-    padding: 15,
-    borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
+  menuButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  backButton: {
+    padding: 8,
+  },
+  backButtonText: {
+    color: '#dc2626',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  refreshButton: {
+    padding: 8,
+  },
+  refreshButtonText: {
+    fontSize: 18,
+    color: '#7c2d12',
+  },
+  loadingText: {
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: 50,
+    color: '#6b7280',
+  },
+  alunoCard: {
+    backgroundColor: '#ffffff',
+    margin: 12,
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    borderLeftWidth: 4,
+    borderLeftColor: '#dc2626',
+  },
   alunoNome: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '600',
+    color: '#1f2937',
   },
   alunoMatricula: {
     fontSize: 14,
-    color: '#666',
-    marginTop: 5,
+    color: '#6b7280',
+    marginTop: 4,
   },
   alunoEndereco: {
     fontSize: 14,
-    color: '#666',
-    marginTop: 5,
+    color: '#6b7280',
+    marginTop: 4,
   },
   alunoActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 15,
+    marginTop: 16,
   },
   actionButton: {
-    padding: 8,
-    borderRadius: 5,
-    minWidth: 60,
+    padding: 10,
+    borderRadius: 6,
+    minWidth: 70,
     alignItems: 'center',
   },
   viewButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: '#7c2d12',
   },
   editButton: {
-    backgroundColor: '#FF9500',
+    backgroundColor: '#dc2626',
   },
   deleteButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#ef4444',
   },
   actionButtonText: {
     color: 'white',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   form: {
-    padding: 15,
+    padding: 16,
   },
   label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 15,
-    marginBottom: 5,
-    color: '#333',
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 16,
+    marginBottom: 8,
+    color: '#1f2937',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#f3f4f6',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
+    color: '#1f2937',
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 10,
-    color: '#333',
+    fontWeight: '600',
+    marginTop: 24,
+    marginBottom: 12,
+    color: '#7c2d12',
   },
   cepContainer: {
     flexDirection: 'row',
@@ -705,16 +736,16 @@ const styles = StyleSheet.create({
   },
   cepInput: {
     flex: 1,
-    marginRight: 10,
+    marginRight: 12,
   },
   cepButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#dc2626',
     padding: 12,
     borderRadius: 8,
   },
   cepButtonText: {
     color: 'white',
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   row: {
     flexDirection: 'row',
@@ -722,19 +753,19 @@ const styles = StyleSheet.create({
   },
   halfInput: {
     flex: 1,
-    marginRight: 10,
+    marginRight: 12,
   },
   cursoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   cursoInput: {
     flex: 1,
-    marginRight: 10,
+    marginRight: 12,
   },
   cursoButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#dc2626',
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -743,8 +774,8 @@ const styles = StyleSheet.create({
   },
   cursoButtonText: {
     color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '600',
   },
   cursosList: {
     flexDirection: 'row',
@@ -752,19 +783,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   cursoItem: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: '#fef2f2',
     padding: 8,
-    margin: 5,
-    borderRadius: 15,
+    margin: 4,
+    borderRadius: 20,
     flexDirection: 'row',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(220, 38, 38, 0.2)',
   },
   cursoText: {
     marginRight: 8,
     fontSize: 14,
+    color: '#7c2d12',
+    fontWeight: '500',
   },
   cursoRemoveButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#ef4444',
     width: 20,
     height: 20,
     borderRadius: 10,
@@ -773,46 +808,51 @@ const styles = StyleSheet.create({
   },
   cursoRemoveText: {
     color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 12,
+    fontWeight: '600',
   },
   saveButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: '#dc2626',
+    padding: 16,
+    borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   saveButtonText: {
     color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: '600',
   },
   alunoDetails: {
-    padding: 15,
+    padding: 16,
   },
   detailTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 10,
-    color: '#333',
+    fontWeight: '600',
+    marginTop: 24,
+    marginBottom: 12,
+    color: '#7c2d12',
   },
   detailLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 10,
-    color: '#666',
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 12,
+    color: '#6b7280',
   },
   detailValue: {
     fontSize: 16,
-    color: '#333',
-    marginBottom: 5,
+    color: '#1f2937',
+    marginBottom: 8,
   },
   cursoDetail: {
     fontSize: 16,
-    color: '#333',
-    marginLeft: 10,
-    marginBottom: 5,
+    color: '#1f2937',
+    marginLeft: 12,
+    marginBottom: 8,
   },
 });
