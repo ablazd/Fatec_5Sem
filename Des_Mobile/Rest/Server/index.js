@@ -1,145 +1,170 @@
-const express = require("express");
-const bodyparser = require("body-parser");
-const cors = require("cors");
-const methodOverride = require("method-override");
-const mongoose = require("mongoose");
+// expressjs.com
+//ttps://expressjs.com/en/resources/middleware/method-override.html
 
-// Criar um objeto Express e configurar Porta
-const app = express();
+const express = require('express');
+const bodyparser = require('body-parser');
+const cors = require('cors');
+const methodOverride = require('method-override');
+const mongoose = require('mongoose');
+const axios = require('axios');
+const path = require('path');
 const port = 3000;
-
-// Vincular o middleware ao Express
+// criar um objeto express
+const app = express();
+//vincualr o middleware ao express
 app.use(cors());
 
-// Permissâo para usar outros métodos HTTP
-app.use(methodOverride("X-HTTP-Method"));
-app.use(methodOverride("X-HTTP-Method-Override"));
-app.use(methodOverride("X-Method-Override"));
-app.use(methodOverride("_method"));
+// permissão para usar outros métodos HTTP
+app.use(methodOverride('X-HTTP-Method'));
+app.use(methodOverride('X-HTTP-Method-Override'));
+app.use(methodOverride('X-Method-Override'));
+app.use(methodOverride('_method'));
 
-//Permissâo servidor
+//permissão servidor
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept');
   next();
-});
+})
 
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 
-// Conectar ao banco de dados
-let url = "mongodb://localhost:27017/FatecVotorantim";
+// Servir arquivos estáticos
+app.use(express.static(path.join(__dirname, '../public')));
 
-mongoose
-  .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log("Conectado ao banco de dados");
-  })
-  .catch((err) => {
-    console.error("Erro ao conectar ao banco de dados", err);
-  });
+//  fazer a conexão com o banco de dados mongoose
+ let  url = "mongodb://localhost:27017/FatecVotorantim";
 
-// Definir um modelo de exemplo
-const User = mongoose.model("User", { name: String });
+ // testa a conexão
+ mongoose.connect(url)
+ .then(
+     () => console.log('MongoDB connected...') )
+ .catch(
+   () => { console.log("erro na conexão: " ) }
+  );
 
-// Inserir dados de exemplo
-app.post("/users", async (req, res) => {
-  let newUser = new User({ name: req.body.name });
-  await newUser.save().then(() => {
-    console.log("status: Usuário criado com sucesso!");
-    res.status(201).send({ message: "Usuário criado com sucesso!" });
-  }).catch((err) => {
-    console.log("status: Erro ao criar usuário");
-    res.status(500).send({ message: "Erro ao criar usuário", error: err });
-  });
+// Estrutura do modelo Aluno
+const alunoSchema = new mongoose.Schema({
+  matricula: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  nome: {
+    type: String,
+    required: true
+  },
+  endereco: {
+    cep: {
+      type: String,
+      required: true
+    },
+    logradouro: String,
+    cidade: String,
+    bairro: String,
+    estado: String,
+    numero: String,
+    complemento: String
+  },
+  cursos: [{
+    type: String
+  }]
+}, {
+  timestamps: true
 });
 
-//deletar dados a partir do nome
-app.delete("/users/name/", async (req, res) => {
-  await User.deleteOne({ name: req.body.name }).then(() => {
-    console.log("status: Usuário deletado com sucesso!");
-    res.status(200).send({ message: "Usuário deletado com sucesso!" });
-  }).catch((err) => {
-    console.log("status: Erro ao deletar usuário");
-    res.status(500).send({ message: "Erro ao deletar usuário", error: err });
-  });
-});
+const Aluno = mongoose.model('Aluno', alunoSchema);
 
-// Deletar dados de exemplo
-app.delete("/users/:id", async (req, res) => {
-  await User.findByIdAndDelete(req.params.id).then(() => {
-    console.log("status: Usuário deletado com sucesso!");
-    res.status(200).send({ message: "Usuário deletado com sucesso!" });
-  }).catch((err) => {
-    console.log("status: Erro ao deletar usuário");
-    res.status(500).send({ message: "Erro ao deletar usuário", error: err });
-  });
-});
-
-// Alterar dados de exemplo pelo nome
-app.put("/users/name/", async (req, res) => {
-  await User.findOneAndUpdate({ name: req.body.name }, { name: req.body.newName }).then(() => {
-    console.log("status: Usuário alterado com sucesso!");
-    res.status(200).send({ message: "Usuário alterado com sucesso!" });
-  }).catch((err) => {
-    console.log("status: Erro ao alterar usuário");
-    res.status(500).send({ message: "Erro ao alterar usuário", error: err });
-  });
-});
-
-// Alterar dados de exemplo pelo ID
-app.put("/users/:id", async (req, res) => {
-  await User.findByIdAndUpdate(req.params.id, { name: req.body.name }).then(() => {
-    console.log("status: Usuário alterado com sucesso!");
-    res.status(200).send({ message: "Usuário alterado com sucesso!" });
-  }).catch((err) => {
-    console.log("status: Erro ao alterar usuário");
-    res.status(500).send({ message: "Erro ao alterar usuário", error: err });
-  });
-});
-
-// Rota padrão
-app.get("/", (req, res) => {
-  res.send({ status: "ok" });
-});
-
-// Get by name
-app.get("/users/name/:name", async (req, res) => {
+// Rota para buscar CEP na API ViaCEP
+app.get('/api/cep/:cep', async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.params.name });
-    if (!user) return res.status(404).send({ message: "Usuário não encontrado" });
-    res.status(200).send(user);
-  } catch (err) {
-    console.error("Erro ao buscar usuário", err);
-    res.status(500).send({ message: "Erro ao buscar usuário", error: err });
+    const { cep } = req.params;
+    const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+    
+    if (response.data.erro) {
+      return res.status(404).json({ error: 'CEP não encontrado' });
+    }
+    
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar CEP' });
   }
 });
 
-// Get By ID
-app.get("/users/:id", async (req, res) => {
+// Rota principal - serve a página HTML
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
+// API Routes para Alunos
+
+// Listar todos os alunos
+app.get('/api/alunos', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).send({ message: "Usuário não encontrado" });
-    res.status(200).send(user);
-  } catch (err) {
-    console.error("Erro ao buscar usuário", err);
-    res.status(500).send({ message: "Erro ao buscar usuário", error: err });
+    const alunos = await Aluno.find({});
+    res.json(alunos);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar alunos' });
   }
 });
 
-// Get All
-app.get("/users", async (req, res) => {
-  await User.find().then((users) => {
-    res.status(200).send(users);
-  }).catch((err) => {
-    console.log("status: Erro ao buscar usuários");
-    res.status(500).send({ message: "Erro ao buscar usuários", error: err });
-  });
+// Buscar aluno por ID
+app.get('/api/alunos/:id', async (req, res) => {
+  try {
+    const aluno = await Aluno.findById(req.params.id);
+    if (!aluno) {
+      return res.status(404).json({ error: 'Aluno não encontrado' });
+    }
+    res.json(aluno);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar aluno' });
+  }
 });
 
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
+// Criar novo aluno
+app.post('/api/alunos', async (req, res) => {
+  try {
+    const aluno = new Aluno(req.body);
+    await aluno.save();
+    res.status(201).json({ message: 'Aluno criado com sucesso', aluno });
+  } catch (error) {
+    if (error.code === 11000) {
+      res.status(400).json({ error: 'Matrícula já existe' });
+    } else {
+      res.status(500).json({ error: 'Erro ao criar aluno' });
+    }
+  }
 });
+
+// Atualizar aluno
+app.put('/api/alunos/:id', async (req, res) => {
+  try {
+    const aluno = await Aluno.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!aluno) {
+      return res.status(404).json({ error: 'Aluno não encontrado' });
+    }
+    res.json({ message: 'Aluno atualizado com sucesso', aluno });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar aluno' });
+  }
+});
+
+// Deletar aluno
+app.delete('/api/alunos/:id', async (req, res) => {
+  try {
+    const aluno = await Aluno.findByIdAndDelete(req.params.id);
+    if (!aluno) {
+      return res.status(404).json({ error: 'Aluno não encontrado' });
+    }
+    res.json({ message: 'Aluno deletado com sucesso' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao deletar aluno' });
+  }
+});
+
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Example app listening on port http://localhost:${port}`)
+  console.log(`Server accessible from network at http://192.168.50.81:${port}`)
+})

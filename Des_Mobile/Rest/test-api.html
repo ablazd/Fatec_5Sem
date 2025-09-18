@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste API</title>
+</head>
+<body>
+    <h1>Teste da API de Alunos</h1>
+    <button onclick="testarAPI()">Testar API</button>
+    <div id="resultado"></div>
+
+    <script>
+        const url = 'http://192.168.50.60:3000';
+        
+        async function testarAPI() {
+            const resultado = document.getElementById('resultado');
+            
+            try {
+                // Testar listagem
+                const response = await fetch(url + '/api/alunos');
+                const alunos = await response.json();
+                
+                resultado.innerHTML = '<h2>Alunos encontrados:</h2>';
+                resultado.innerHTML += '<pre>' + JSON.stringify(alunos, null, 2) + '</pre>';
+                
+                // Testar inserção
+                const novoAluno = {
+                    matricula: '2024003',
+                    nome: 'Teste Web',
+                    endereco: {
+                        cep: '01310-100',
+                        logradouro: 'Avenida Paulista',
+                        numero: '1000',
+                        complemento: 'Apto 101',
+                        bairro: 'Bela Vista',
+                        cidade: 'São Paulo',
+                        estado: 'SP'
+                    },
+                    cursos: ['Web Development']
+                };
+                
+                const insertResponse = await fetch(url + '/api/alunos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(novoAluno)
+                });
+                
+                const insertResult = await insertResponse.json();
+                resultado.innerHTML += '<h2>Resultado da inserção:</h2>';
+                resultado.innerHTML += '<pre>' + JSON.stringify(insertResult, null, 2) + '</pre>';
+                
+            } catch (error) {
+                resultado.innerHTML = '<h2>Erro:</h2><p>' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>
