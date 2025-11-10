@@ -50,11 +50,11 @@ router.post('/cadastro', async (req, res) => {
     if (usuarioExistente) {
       return res.status(400).json({
         success: false,
-        message: 'Este usuário já existe! Escolha outro nome.'
+        message: 'Este usuário já existe!'
       });
     }
 
-    // Criar novo usuário (senha será hasheada automaticamente pelo pre-save hook)
+    // Criar novo usuário
     const novoUsuario = new User({
       usuario,
       senha

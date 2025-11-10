@@ -14,17 +14,17 @@ const auth = async (req, res, next) => {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
-        message: 'Acesso negado. Token não fornecido.'
+        message: 'Acesso negado.'
       });
     }
 
-    // Extrair o token (remover 'Bearer ')
+    // Extrair o token
     const token = authHeader.substring(7);
 
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Acesso negado. Token inválido.'
+        message: 'Acesso negado. '
       });
     }
 
@@ -38,7 +38,7 @@ const auth = async (req, res, next) => {
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: 'Usuário não encontrado. Token inválido.'
+          message: 'Usuário não encontrado.'
         });
       }
 

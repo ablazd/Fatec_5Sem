@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test:db": "node test-mongodb.js"
+    "test:db": "node test-mongodb.js",
+    "frontend": "cd frontend && npm run dev",
+    "install-all": "npm install && cd frontend && npm install"
   },
   "keywords": ["cifra", "cesar", "jwt", "mongodb", "express"],
   "author": "",

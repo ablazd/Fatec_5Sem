@@ -37,7 +37,7 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// Método para comparar senhas
+// comparar senhas
 userSchema.methods.compararSenha = async function(senhaInformada) {
   return await bcrypt.compare(senhaInformada, this.senha);
 };

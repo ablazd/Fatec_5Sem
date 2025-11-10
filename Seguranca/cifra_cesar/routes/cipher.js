@@ -75,20 +75,20 @@ router.post('/criptografar', auth, async (req, res) => {
       });
     }
 
-    // Criptografar mensagem
+    // Criptografar
     const mensagemCifrada = cifrarCesar(mensagem, passoInt);
 
     // Gerar hash único
     let hash = gerarHash();
     
-    // Garantir que o hash é único
+    // verificar se hash é único
     let hashExiste = await Hash.findOne({ hash });
     while (hashExiste) {
       hash = gerarHash();
       hashExiste = await Hash.findOne({ hash });
     }
 
-    // Salvar hash no banco de dados
+    // Salvar hash no banco
     const novoHash = new Hash({
       hash,
       passo: passoInt,

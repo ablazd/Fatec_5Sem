@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import cipherRoutes from './routes/cipher.js';
 
-// Carregar variáveis de ambiente
+// variáveis de ambiente
 dotenv.config();
 
 const app = express();
@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 // MIDDLEWARES
 // ========================================
 
-// CORS - Permitir requisições do frontend
+// CORS
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true
@@ -38,15 +38,9 @@ app.use((req, res, next) => {
 const conectarMongoDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ MongoDB conectado com sucesso!');
-    console.log(`📊 Database: ${mongoose.connection.name}`);
-    console.log(`🔗 Host: ${mongoose.connection.host}:${mongoose.connection.port}`);
+    console.log('MongoDB conectado!');
   } catch (error) {
-    console.error('❌ Erro ao conectar ao MongoDB:', error.message);
-    console.error('📋 Verifique se:');
-    console.error('   1. MongoDB está rodando (localhost:27017)');
-    console.error('   2. MONGODB_URI está correto no arquivo .env');
-    console.error('   3. Não há firewall bloqueando a conexão');
+    console.error('Erro ao conectar ao MongoDB:', error.message);
     process.exit(1);
   }
 };
@@ -59,7 +53,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 mongoose.connection.on('disconnected', () => {
-  console.warn('⚠️  MongoDB desconectado');
+  console.warn(' MongoDB desconectado');
 });
 
 // ========================================
@@ -112,15 +106,7 @@ app.use((err, req, res, next) => {
 // ========================================
 
 app.listen(PORT, () => {
-  console.log(`\n🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📍 URL: http://localhost:${PORT}`);
-  console.log(`\n📚 Endpoints disponíveis:`);
-  console.log(`   POST   /api/auth/cadastro - Cadastrar usuário`);
-  console.log(`   POST   /api/auth/login - Fazer login`);
-  console.log(`   GET    /api/auth/verificar - Verificar token`);
-  console.log(`   POST   /api/cipher/criptografar - Criptografar mensagem`);
-  console.log(`   POST   /api/cipher/descriptografar - Descriptografar mensagem`);
-  console.log(`   GET    /api/cipher/historico - Histórico de hashes\n`);
+  console.log(`\n Servidor rodando na porta ${PORT}`);
 });
 
 // Graceful shutdown
